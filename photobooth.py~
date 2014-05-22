@@ -37,10 +37,42 @@ increment=True
 if 'noincrement' in i:
 	increment = False
 
-
 # ========= DONE COMMAND LINE ARGUMENTS =============
 
-print 'nousecamera', repr(camera_arg)
-print 'nomove', repr(move)
-print 'lastphoto', last
-print 'increment', repr(increment)
+# verify command line args...
+print 'nousecamera:', repr(camera_arg)
+print 'nomove:', repr(move)
+print 'lastphoto:', last
+print 'increment:', repr(increment)
+
+filename= new_filename()
+print 'filename:', filename
+
+# prime threads for compositing images...
+t_ = []
+t_.append( threading.Thread(target=generate_composite, args=('display', filename)) )
+t_.append( threading.Thread(target=generate_composite, args=('phone', filename, generateprint=False)) )
+for i in t_: i.start()
+
+start = time.time()
+for i in range(4):
+     print 
+     print 'Grabbing image: ', i+1
+     grab_image(filename, i, usecamera=False)
+     time.sleep(6)
+
+living=True
+while ( living ):# or t_print.isAlive() ): 
+	living=False
+	time.sleep(1)
+	print '    ===> still processing...'
+	for i in t_: 
+		if i.isAlive(): living=True
+
+cleanup_temp_files(filename)
+
+print 
+print 'Done: ', time.time()-start
+
+
+

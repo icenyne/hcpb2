@@ -41,7 +41,7 @@ templates = {'display':[ ['504x336', '+124+12', 'images/backscreen-hd.jpg', 'bou
 
 # generate a composite image from a template, horizontal or vertical, abstracted 
 #    and genericized so that various combinations of templates can be created...
-def generate_composite(template, filename, blocking=False, generateprint=False):
+def generate_composite(template, filename, blocking=True, generateprint=False):
 	# base graphicsmagick commands to generate composites...
 	interrim = 'gm composite -resize &ARG1 -geometry &ARG2 &FILENAME_&I.jpg &ARG3 -quality 98 &ARG4 '
 	ending = 'gm composite -geometry &ARG1 -resize &ARG2 &ARG3 &ARG4 -quality 95 &FILENAME_&TEMPLATE.jpg '
@@ -72,6 +72,9 @@ def generate_composite(template, filename, blocking=False, generateprint=False):
 		shellcmd('gm composite -geometry +2001+0 ' + filename + '_phone.jpg done.jpg -quality 100 done.jpg')
 		shellcmd('gm convert -stroke gray -draw "line 2000,0 2000,6000" done.jpg -quality 95 ' + filename + '_print.jpg')
 
+# generate print fascade to generate_composite...
+def generate_print(template, filename, blocking=True, generateprint=True):
+	generate_composite(template, filename, blocking, generateprint)
 
 # delete the temporary files created during creation of composites...
 def cleanup_temp_files(filename):

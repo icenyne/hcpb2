@@ -41,7 +41,7 @@ templates = {'display':[ ['504x336', '+124+12', 'images/backscreen-hd.jpg', 'bou
 
 # generate a composite image from a template, horizontal or vertical, abstracted 
 #    and genericized so that various combinations of templates can be created...
-def generate_composite(template, filename, blocking=False, generateprint=False):
+def generate_composite(template, filename, blocking=True, generateprint=False):
 	# base graphicsmagick commands to generate composites...
 	interrim = 'gm composite -resize &ARG1 -geometry &ARG2 &FILENAME_&I.jpg &ARG3 -quality 98 &ARG4 '
 	ending = 'gm composite -geometry &ARG1 -resize &ARG2 &ARG3 &ARG4 -quality 95 &FILENAME_&TEMPLATE.jpg '
@@ -78,7 +78,7 @@ def cleanup_temp_files(filename):
 	# remove temp files...
 	shellcmd('rm *output.jpg done.jpg '+filename+'*done')
 
-# filename function: returns next sequential filename
+# filename function: returns next sequential filename (as a string)
 def new_filename(storename='lastphoto', increment=True):
 	last = eval(open(storename, 'r').read())
 	filename = 'DSC' + (4-len(str(last)))*'0' + str(last)
