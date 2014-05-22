@@ -41,6 +41,6 @@ if 'noincrement' in i:
 # ========= DONE COMMAND LINE ARGUMENTS =============
 
 print 'nousecamera', repr(camera_arg)
-print 'nomove', repr(nomove)
+print 'nomove', repr(move)
 print 'lastphoto', last
 print 'increment', repr(increment)

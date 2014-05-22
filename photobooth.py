@@ -37,10 +37,10 @@ increment=True
 if 'noincrement' in i:
 	increment = False
 
-
 # ========= DONE COMMAND LINE ARGUMENTS =============
 
-print 'nousecamera', repr(camera_arg)
-print 'nomove', repr(move)
-print 'lastphoto', last
-print 'increment', repr(increment)
+# verify command line args...
+print 'nousecamera:', repr(camera_arg)
+print 'nomove:', repr(move)
+print 'lastphoto:', last
+print 'increment:', repr(increment)
