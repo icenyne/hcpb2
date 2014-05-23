@@ -1,3 +1,4 @@
+#!/usr/bin/python
 # many dependencies are all brought in with this import...
 from photoboothlib import *
 
@@ -63,15 +64,33 @@ if 'noincrement' in i:
 #=============================================================================
 
 
+
+#=============================================================================
+# ==================================  MAIN  ==================================
+#=============================================================================
+
 # verify command line args...
 print 'nousecamera:', repr(camera_arg)
 print 'nomove:', repr(move)
 print 'lastphoto:', last
 print 'increment:', repr(increment)
 
+pygame.init()
+screen = pygame.display.set_mode(size)
+#toggle_fullscreen()
+
 while (1):
 
-	bb = raw_input('\r\nHit return to continue...'
+	# wait for key push.
+	# bb = raw_input('\r\nHit return to continue...')
+	showtext(screen, "Push any button", 100)
+	waitforkey([K_g, K_r, K_y])
+	fillscreen(screen, black)
+
+	showtext(screen, "Four photos will be taken", 75)
+	time.sleep(2.5)
+	fillscreen(screen, black)
+
 	# keep track of the starting time for some statistics...
 	start = time.time()
 	
@@ -89,19 +108,28 @@ while (1):
 
 	# grab the sequence of images from the camera (or, if specified, dummy images)...
 	for i in range(4):
+		showtext(screen, 'Image: '+str(4-i), 100)
+		time.sleep(1.0)
 		print 
 		print 'Grabbing image: ', i+1
 		grab_image(filename, i, camera_arg)
-		time.sleep(1.5)
+		displayimage(screen, filename+'_'+suffix[i]+'.jpg', camerasize, cameraloc)
+		time.sleep(3)
 
 	# wait until all compositing threads are complete...
 	living=True
 	while ( living ):# or t_print.isAlive() ): 
 		living=False
+		fillscreen(screen, black)
+		time.sleep(1)
+		showtext(screen, 'Processing...', 100)
 		time.sleep(1)
 		print '    ===> still processing...'	
 		for i in t_: 
 			if i.isAlive(): living=True
+
+	displayimage(screen, filename+'_display.jpg', size)
+	time.sleep(5)
 
 	# clean up the temporary files generated during compositing...
 	cleanup_temp_files(filename)

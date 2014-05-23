@@ -104,6 +104,112 @@ def grab_image(filename, i, usecamera=True):
 	open(filename+'_'+suffix[i]+'_done', 'w').write('done') # flag that file is complete...
 
 
+# move files into local subdirectories and SAMBA share at path
+def move_files(filename, path='/media/PHOTOBOOTH/', copy=True):
+      if copy: cmd='cp '
+      else: cmd='mv '
+      try:
+	print
+	print 'filename = ', filename
+	print cmd+'raw images...'
+	shellcmd(cmd+filename+'_[a-d].jpg '+path+'raw-images')
+	print cmd+'dislay images...'
+        shellcmd(cmd+filename+'_display.jpg '+path+'for-display')
+	print cmd+'print image...'
+        shellcmd(cmd+filename+'_print.jpg '+path+'for-print')
+	print cmd+'phone image...'
+        shellcmd(cmd+filename+'_phone.jpg '+path+'for-phone')
+      except:
+	print 'PROBLEMS!!'
+
+
+#size = width, height = 960, 540
+#camerasize = camw, camh =  810,540
+size = width, height = 1230, 692
+camerasize = camw, camh =  1037,692
+cameraloc = (width-camw)/2, 0
+black = (0,0,0)
+white = (255,255,255)
+
+def waitforkey(key, quitable = True):
+	userkey = False
+	while not(userkey):
+		time.sleep(1)
+		for event in pygame.event.get():
+			#print repr(event)
+			if event.type == QUIT: sys.exit()
+			elif event.type == KEYDOWN: 
+				#print 'keydown...'
+				if event.key in key: return
+				if quitable and event.key == K_q: sys.exit()
+	pygame.event.clear()
+
+def fillscreen(screen, color):
+	screen.fill(color)
+	pygame.display.flip()
+
+def displayimage(screen, filename, size, location=(0,0)):
+		image = pygame.image.load(filename)
+		imagerect = image.get_rect()
+		image = pygame.transform.scale(image, size)
+		screen.blit(image, location)
+		pygame.display.flip()
+
+def flashtext(duration, rate, screen, text, size, location=None):
+	bgwhite = pygame.Surface(screen.get_size())
+	bgblack = pygame.Surface(screen.get_size())
+	bgwhite = bgwhite.convert()
+	bgblack = bgblack.convert()
+	bgwhite.fill(white)
+	bgblack.fill(black)
+	
+	fontname = pygame.font.match_font('freeserif')
+	font = pygame.font.Font(fontname, 128)
+	textw = font.render(text, 1, white)
+	textb = font.render(text, 1, black)
+	textwpos = textw.get_rect()
+	textbpos = textb.get_rect()
+	if location==None:
+		textwpos.centerx = textbpos.centerx = bgwhite.get_rect().centerx	
+		textwpos.centery = textbpos.centery = bgwhite.get_rect().centery
+	else:
+		w,h = location
+		textwpos.centerx = textbpos.centerx = w
+		textwpos.centery = textbpos.centery = h
+	bgwhite.blit(textb, textbpos)
+	bgblack.blit(textw, textbpos)
+
+	start = time.time()
+	while (time.time()-start < duration):
+		screen.blit(bgblack, (0,0))
+		pygame.display.flip()
+		time.sleep(rate/2.)
+		screen.blit(bgwhite, (0,0))
+		pygame.display.flip()
+		time.sleep(rate/2.)
+
+
+def showtext(screen, text, size, location=None):
+	bgwhite = pygame.Surface(screen.get_size())
+	bgwhite = bgwhite.convert()
+	bgwhite.fill(black)#white)
+	
+	fontname = pygame.font.match_font('freeserif')
+	font = pygame.font.Font(fontname, size)
+	textb = font.render(text, 1, white)#black)
+
+	textbpos = textb.get_rect()
+	if location==None:
+		textbpos.centerx = bgwhite.get_rect().centerx	
+		textbpos.centery = bgwhite.get_rect().centery
+	else:
+		w,h = location
+		textbpos.centerx = w	
+		textbpos.centery = h
+	bgwhite.blit(textb, textbpos)
+
+	screen.blit(bgwhite, (0,0))
+	pygame.display.flip()
 
 
 
