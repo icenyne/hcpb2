@@ -7,7 +7,6 @@ from photoboothlib import *
 if 'nousecamera' in sys.argv:
 	camera_arg=False
 else:
-	C = piggyphoto.camera()
 	camera_arg=True
 
 # move the files when done? Assume true...
@@ -51,15 +50,16 @@ print 'filename:', filename
 # prime threads for compositing images...
 t_ = []
 t_.append( threading.Thread(target=generate_composite, args=('display', filename)) )
-t_.append( threading.Thread(target=generate_composite, args=('phone', filename, generateprint=False)) )
+t_.append( threading.Thread(target=generate_composite, args=('phone', filename)) )
+# t_.append( threading.Thread(target=generate_print, args=('phone', filename)) )
 for i in t_: i.start()
 
 start = time.time()
 for i in range(4):
      print 
      print 'Grabbing image: ', i+1
-     grab_image(filename, i, usecamera=False)
-     time.sleep(6)
+     grab_image(filename, i, camera_arg)
+     time.sleep(3)
 
 living=True
 while ( living ):# or t_print.isAlive() ): 

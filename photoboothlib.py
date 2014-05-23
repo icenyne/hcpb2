@@ -96,7 +96,10 @@ def grab_image(filename, i, usecamera=True):
 	# Only capture image if it's one of the four... 
 	if i in range(4): 
 		# grab from camera or make a copy of the dummy images (for testing...)
-		if usecamera: C.capture_image(filename+'_'+suffix[i] + '.jpg')
+		if usecamera:
+			# create PTP connection to camera...
+			C = piggyphoto.camera() 
+			C.capture_image(filename+'_'+suffix[i] + '.jpg')
 		else: shellcmd('cp images/DSCdummy'+str(i+1)+'.jpg '+filename+'_'+suffix[i] + '.jpg')
 	open(filename+'_'+suffix[i]+'_done', 'w').write('done') # flag that file is complete...
 
