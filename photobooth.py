@@ -16,6 +16,7 @@ OPTIONS:
 	nomove		do not move images after processing (default: move)
 	lastphoto=xxxx	begin sequence with the provided 4-digit (>=1000) number 
 	noincrement	do not increment the image sequence number (default: increment)
+	doubleprint	generate the double print (adds time, default: no doubleprint)
 
 DESCRIPTION:
 	This python script implements a photo booth where a sequence of four images is 
@@ -32,6 +33,11 @@ if 'nousecamera' in sys.argv:
 	camera_arg=False
 else:
 	camera_arg=True
+
+if 'doubleprint' in sys.argv:
+	doubleprint=True
+else:
+	doubleprint=False
 
 # move the files when done? Assume true...
 move=True
@@ -57,7 +63,7 @@ if temp not in ['']:
 
 # increment output photo index? default is true...
 increment=True
-if 'noincrement' in i:
+if 'noincrement' in sys.argv:
 	increment = False
 #=============================================================================
 # ===================== DONE COMMAND LINE ARGUMENTS ==========================
@@ -74,6 +80,7 @@ print 'nousecamera:', repr(camera_arg)
 print 'nomove:', repr(move)
 print 'lastphoto:', last
 print 'increment:', repr(increment)
+print 'doubleprint:', repr(doubleprint)
 
 pygame.init()
 screen = pygame.display.set_mode(size)
@@ -101,8 +108,8 @@ while (1):
 	# prime threads for compositing images...
 	t_ = []
 	t_.append( threading.Thread(target=generate_composite, args=('display', filename)) )
-	t_.append( threading.Thread(target=generate_composite, args=('phone', filename)) )
-	# t_.append( threading.Thread(target=generate_print, args=('phone', filename)) )
+	if not(doubleprint): t_.append( threading.Thread(target=generate_composite, args=('phone', filename)) )
+	else: t_.append( threading.Thread(target=generate_print, args=('phone', filename)) )
 	# start the queued threads...
 	for i in t_: i.start()
 
